@@ -1,4 +1,4 @@
-package com.xiaomi.be;
+package com.xiaomi.be.introduction;
 
 import akka.actor.*;
 import akka.actor.dsl.Creators;
@@ -62,12 +62,13 @@ public class HelloAkka {
 
     public static void main(String[] args) throws Exception {
         ActorSystem system = ActorSystem.create("hello-akka-system");
-        final ActorRef greeter = system.actorOf(Props.create(GreeterActor.class), "greeter");
+        final ActorRef greeter = system.actorOf(Props.create(GreeterActor.class).withMailbox("bounded-mailbox"), "greeter");
 
         final Inbox inbox = Inbox.create(system);
 
         greeter.tell(new WhoToGreet("David"), ActorRef.noSender());
 
+        // 如果不需要actor返回,直接tell就好; inbox的行为类似一个没有receive方法的actor； 这里使用actor也可以完成
         inbox.send(greeter, new Greet());
 //        greeter.tell(new Greet(), ActorRef.noSender());
 

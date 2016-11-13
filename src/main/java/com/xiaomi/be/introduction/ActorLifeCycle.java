@@ -1,6 +1,7 @@
-package com.xiaomi.be;
+package com.xiaomi.be.introduction;
 
 import akka.actor.*;
+import com.xiaomi.be.introduction.HelloAkka;
 
 public class ActorLifeCycle {
 
@@ -20,7 +21,7 @@ public class ActorLifeCycle {
 
         ActorRef ref = null;
 
-        ActorSelection.apply(ref, path.toString());
+//        ActorSelectionDemo.apply(ref, path.toString());
 
         System.out.println(ref == greeter);
     }
