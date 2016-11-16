@@ -6,6 +6,9 @@ import akka.dispatch.PriorityGenerator;
 import akka.dispatch.UnboundedPriorityMailbox;
 import com.typesafe.config.Config;
 
+/**
+ * 如何实例化 PriorityMailBox
+ */
 public class MyPriorityMailBox extends UnboundedPriorityMailbox{
 
     public MyPriorityMailBox(ActorSystem.Settings settings, Config config) {
