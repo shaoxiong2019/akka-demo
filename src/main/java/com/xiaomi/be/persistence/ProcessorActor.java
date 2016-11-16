@@ -4,6 +4,8 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.Procedure;
 import akka.persistence.*;
+import scala.PartialFunction;
+import scala.runtime.BoxedUnit;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -13,15 +15,17 @@ public class ProcessorActor extends UntypedPersistentActor {
 
     private ProcessorState state = new ProcessorState();
 
-    private int getEvents() {
-        return state.size();
-    }
-
-    @Override
     /**
      * 禁用启动时的自动恢复 onReceiveRecover
      */
+    @Override
     public void preStart() throws Exception {
+        LOG.info("preStart.....");
+        Recover.create(SnapshotSelectionCriteria.apply(1000, System.currentTimeMillis() - 10 * 1000));
+    }
+
+    private int getEvents() {
+        return state.size();
     }
 
     @Override
@@ -43,12 +47,14 @@ public class ProcessorActor extends UntypedPersistentActor {
      */
     @Override
     public void onReceiveCommand(final Object msg) throws Exception {
+        LOG.info("receive command....");
         if (msg instanceof Cmd) {
             String data = ((Cmd) msg).data;
             final Evt evt = new Evt(data, UUID.randomUUID().toString());
             persist(evt, new Procedure<Evt>() {
                 @Override
                 public void apply(Evt evt) throws Exception {
+                    LOG.info("execute command");
                     state.update(evt);
                     // broadcast event on eventstream 发布该事件
                     getContext().system().eventStream().publish(evt);
